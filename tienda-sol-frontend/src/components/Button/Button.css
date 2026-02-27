@@ -1,0 +1,55 @@
+.button {
+  padding: 0.5rem 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-md);
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease-in-out, box-shadow 0.2s ease-in-out;
+    color:var(--color-accent-secondary); /* letras color*/
+}
+@media(max-width: 768px) {
+  .button{
+    font-weight: 100;
+    font-size: 0.9rem;  
+    padding: 0.3rem;
+    margin: none;
+  }
+}
+
+.button:focus {
+  box-shadow: 0 0 0 3px var(--color-accent-primary-transparent);
+}
+
+.button:disabled {
+  background-color: var(--color-gray-400);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.button--primary {
+  background-color: var(--color-accent-secondary);
+  color: var(--color-white);
+}
+
+.button--primary:hover:not(:disabled) {
+  background-color: var(--color-accent-primary);
+  color: var(--color-bordo-negro);
+}
+
+.button--secondary {
+  background-color: var(--color-accent-primary);
+  color: var(--color-bordo-negro);
+}
+
+.button--secondary:hover:not(:disabled) {
+  background-color: var(--color-accent-secondary);
+  color: var(--color-white);
+}
+
+.button--full-width {
+    width: 100%;
+    padding: 0.5rem;
+}

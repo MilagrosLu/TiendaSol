@@ -1,0 +1,9 @@
+{
+  "name": "tienda-sol",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "back": "cd tienda-sol-back && npm run dev",
+    "front": "cd tienda-sol-frontend && npm start"
+  }
+}

@@ -1,0 +1,322 @@
+openapi: 3.0.1
+info:
+  title: API de Pedidos
+  version: "1.0.0"
+  description: Endpoints para crear, consultar y actualizar el estado de pedidos.
+
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: Pedidos
+    description: Operaciones sobre pedidos
+
+paths:
+
+  /pedidos:
+    post:
+      tags: [Pedidos]
+      summary: Crear un nuevo pedido
+      description: >
+        El comprador autenticado crea un pedido.  
+        Los productos se validan, se verifica el stock y se determina automáticamente el vendedor.
+      parameters:
+        - name: X-User
+          in: header
+          required: true
+          description: Username del usuario autenticado (debe ser Comprador).
+          schema:
+            type: string
+            example: "jose50"
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PedidoCreacionDTO"
+      responses:
+        "201":
+          description: Pedido creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pedido"
+        "400":
+          description: Error de validación (Zod o errores de dominio)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZodValidationError"
+        "409":
+          description: Stock insuficiente o errores de dominio múltiples
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DomainMultipleErrors"
+
+  /pedidos/{id}:
+    get:
+      tags: [Pedidos]
+      summary: Consultar un pedido por ID
+      description: >
+        Solo pueden verlo el comprador, el vendedor o un administrador.
+      parameters:
+        - name: X-User
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "jose50"
+
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "654a8f0c3e8f9b0a1d2c3e00"
+
+      responses:
+        "200":
+          description: Pedido encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pedido"
+        "400":
+          description: ID inválido (Zod)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZodValidationError"
+        "403":
+          description: Usuario sin permiso para ver el pedido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PedidoInexistenteError"
+
+    patch:
+      tags: [Pedidos]
+      summary: Cambiar el estado de un pedido
+      description: >
+        Permite cambiar el estado del pedido.  
+        Pueden hacerlo el vendedor o un administrador.  
+        Si el estado cambia a *Cancelado*, se reponen los stocks.
+      parameters:
+        - name: X-User
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "vendedor01"
+
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CambioEstadoDTO"
+
+      responses:
+        "200":
+          description: Pedido actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pedido"
+
+        "400":
+          description: Datos inválidos (Zod o estado inválido)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZodValidationError"
+
+        "403":
+          description: Usuario no autorizado para cambiar el estado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        "404":
+          description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PedidoInexistenteError"
+
+
+components:
+  schemas:
+    ItemPedidoDTO:
+      type: object
+      required: [productoID, cantidad]
+      properties:
+        productoID:
+          type: string
+        cantidad:
+          type: integer
+          minimum: 1
+
+    DireccionEntregaDTO:
+      type: object
+      required: [calle, altura, codigoPostal, ciudad, provincia, pais]
+      properties:
+        calle:
+          type: string
+        altura:
+          type: integer
+        piso:
+          type: integer
+          nullable: true
+        departamento:
+          type: string
+          nullable: true
+        codigoPostal:
+          type: integer
+        ciudad:
+          type: string
+        provincia:
+          type: string
+        pais:
+          type: string
+
+    PedidoCreacionDTO:
+      type: object
+      required: [items, moneda, direccionEntrega]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ItemPedidoDTO"
+        moneda:
+          type: string
+          enum: [PESO_ARG, DOLAR_USA, REAL]
+        direccionEntrega:
+          $ref: "#/components/schemas/DireccionEntregaDTO"
+
+    Pedido:
+      type: object
+      properties:
+        _id:
+          type: string
+        comprador:
+          type: string
+        vendedor:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              producto:
+                type: object
+              cantidad:
+                type: integer
+        total:
+          type: number
+        moneda:
+          type: string
+        estadoNombre:
+          type: string
+          enum: [Pendiente, Confirmado, En_Preparacion, Enviado, Entregado, Cancelado]
+        direccionEntrega:
+          $ref: "#/components/schemas/DireccionEntregaDTO"
+        historialCambioPedidos:
+          type: array
+          items:
+            type: object
+        fechaCreacion:
+          type: string
+          format: date-time
+        numero:
+          type: integer
+
+    CambioEstadoDTO:
+      type: object
+      required: [estado]
+      properties:
+        estado:
+          type: string
+          enum: [Pendiente, Confirmado, En_Preparacion, Enviado, Entregado, Cancelado]
+        motivo:
+          type: string
+          nullable: true
+
+    ZodValidationError:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "ValidationError"
+        message:
+          type: string
+          example: "Los datos ingresados no son correctos"
+        details:
+          type: array
+          items:
+            type: string
+
+    DomainMultipleErrors:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "DomainMultipleErrors"
+        message:
+          type: string
+          example: "Se encontraron varios errores"
+        errors:
+          type: array
+          items:
+            type: string
+
+    PedidoInexistenteError:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "PedidoInexistenteError"
+        message:
+          type: string
+          example: "El pedido solicitado no existe."
+        details:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          
+    PedidoResumen:
+      type: object
+      properties:
+        id:
+          type: string
+        numero:
+          type: integer
+        fechaCreacion:
+          type: string
+          format: date-time
+        total:
+          type: number
+        moneda:
+          type: string
+        estadoNombre:
+          type: string
+          enum: [Pendiente, Confirmado, En_Preparacion, Enviado, Entregado, Cancelado]

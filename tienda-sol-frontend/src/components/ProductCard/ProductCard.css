@@ -1,0 +1,195 @@
+.product-card {
+  background-color: var(--color-white);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  transform: scale(1);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  width:auto
+}
+
+.product-card:hover {
+  transform: scale(1.05);
+}
+
+.product-card__image {
+  width: 100%;
+  height: 14rem;
+  object-fit: cover;
+}
+
+.product-card__content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.product-card__title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: clip;
+   word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.product-card__description {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem; 
+  margin-top: 0.25rem;
+  flex-grow: 1;
+ 
+}
+
+.product-card__footer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-card__price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-bordo-negro);
+  
+}
+
+.product-card__button {
+  background-color: var(--color-accent-secondary);
+  color: var(--color-white);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  transition: background-color 0.3s ease-in-out;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.product-card__button:hover {
+  background-color: var(--color-gray-500);
+}
+
+.product-card__button:disabled {
+  background-color: var(--color-gray-400);
+  cursor: not-allowed;
+  box-shadow: none;
+  color: var(--color-gray-700);
+}
+
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: var(--color-accent-secondary, #75162D);
+}
+
+.modal-message {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.modal-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.modal-button--cancel {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.modal-button--cancel:hover {
+  background-color: #d1d5db;
+}
+
+.modal-button--confirm {
+  background-color: var(--color-accent-secondary, #75162D);
+  color: white;
+}
+
+.modal-button--confirm:hover {
+  background-color: #5a1123;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(117, 22, 45, 0.3);
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 1.5rem;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .modal-button {
+    width: 100%;
+  }
+}
+

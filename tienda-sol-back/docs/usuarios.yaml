@@ -1,0 +1,218 @@
+openapi: 3.0.1
+info:
+  title: API Usuarios
+  version: "1.0.0"
+  description: >
+    Documentación de los endpoints de usuarios.    
+    El parámetro **id** representa el **username** del usuario.
+
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: Usuarios
+    description: Operaciones sobre usuarios
+
+paths:
+
+  /usuarios:
+    post:
+      tags:
+        - Usuarios
+      summary: Crear un nuevo usuario
+      description: >
+        Crea un usuario nuevo y, si corresponde, su tienda asociada.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UsuarioDTO"
+      responses:
+        "201":
+          description: Usuario creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "400":
+          description: Error de validación (Zod)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZodValidationErrorExample"
+        "409":
+          description: Username duplicado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YaExisteUsuarioError"
+
+  /usuarios/{id}:
+    get:
+      tags:
+        - Usuarios
+      summary: Obtener un usuario por username
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Username del usuario
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsuarioCompleto"
+        "400":
+          description: Username inválido (Zod)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZodValidationErrorExample"
+        "404":
+          description: Usuario inexistente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsuarioInexistenteError"
+
+  /usuarios/{id}/pedidos:
+    get:
+      tags:
+        - Usuarios
+      summary: Consultar historial de pedidos de un usuario comprador
+      description: >
+        Requiere autenticación por header **X-User**.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: X-User
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Historial encontrado
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "./pedidos.yaml#/components/schemas/PedidoResumen"
+        "400":
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZodValidationErrorExample"
+        "403":
+          description: Usuario sin permiso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Usuario inexistente o sin historial
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+
+    UsuarioDTO:
+      type: object
+      required:
+        - username
+        - password
+        - nombre
+        - email
+        - telefono
+        - tipoUsuario
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        nombre:
+          type: string
+        email:
+          type: string
+        telefono:
+          type: string
+        tipoUsuario:
+          type: string
+          enum: [Comprador, Vendedor, Admin]
+        tienda:
+          $ref: "./tiendas.yaml#/components/schemas/TiendaDTO"
+
+    UsuarioCompleto:
+      allOf:
+        - $ref: "#/components/schemas/UsuarioDTO"
+        - type: object
+          properties:
+            _id:
+              type: string
+            fechaAlta:
+              type: string
+              format: date-time
+
+    UserDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        tipo:
+          type: string
+          enum: [Comprador, Vendedor, Admin]
+
+    Error:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+        details:
+          nullable: true
+
+    ZodValidationErrorExample:
+      type: object
+      example:
+        name: "ValidationError"
+        message: "Los datos ingresados no son correctos"
+        details:
+          - "El username no puede estar vacío"
+          - "La contraseña debe tener 8 dígitos"
+
+    UsuarioInexistenteError:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "UsuarioInexistenteError"
+        message:
+          type: string
+          example: "El usuario solicitado no existe."
+        details:
+          type: string
+          example: "Intento de acceder al USUARIO jose50 inexistente."
+
+    YaExisteUsuarioError:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+        details:
+          type: string

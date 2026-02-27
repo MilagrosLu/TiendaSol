@@ -1,0 +1,123 @@
+openapi: 3.0.1
+info:
+  title: API Tiendas
+  version: "1.1.0"
+  description: >
+    Endpoints para consultar y buscar tiendas registradas en el sistema
+
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: Tiendas
+    description: Operaciones relacionadas con tiendas de vendedores
+
+paths:
+
+  /tiendas:
+    get:
+      tags:
+        - Tiendas
+      summary: Obtener todas las tiendas registradas
+      description: Retorna un listado completo de tiendas disponibles en el sistema.
+      responses:
+        "200":
+          description: Lista de tiendas obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tienda"
+              examples:
+                ejemplo:
+                  value:
+                    - username: "juanperez"
+                      nombre: "Tienda La Moderna"
+                      descripcion: "Artículos de bazar y hogar"
+                    - username: "carla85"
+                      nombre: "Dulce Tentación"
+                      descripcion: "Pastelería artesanal"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /tiendas/{username}:
+    get:
+      tags:
+        - Tiendas
+      summary: Buscar tienda por vendedor
+      description: Busca todas las tiendas cuyo campo **username** coincida exactamente con el parámetro.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Username del vendedor de la tienda
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tienda encontrada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tienda"
+              example:
+                - username: "juanperez"
+                  nombre: "Tienda La Moderna"
+                  descripcion: "Artículos de bazar y hogar"
+        "404":
+          description: No se encontró la tienda buscada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+
+    Tienda:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username del vendedor de la tienda
+        nombre:
+          type: string
+        descripcion:
+          type: string
+
+    TiendaDTO:
+      type: object
+      properties:
+        nombre:
+          type: string
+        descripcion:
+          type: string
+      required:
+        - nombre
+        - descripcion
+
+    Error:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "InternalServerError"
+        message:
+          type: string
+          example: "Ocurrió un error inesperado."
+        details:
+          type: object
+          nullable: true

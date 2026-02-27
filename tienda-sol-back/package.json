@@ -1,0 +1,60 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "NODE_ENV=production node server.js",
+    "dev": "node --watch server.js",
+    "e2e":"NODE_ENV=test node --watch server.js",
+    "test": "jest",
+    "test:unit": "jest unit/",
+    "test:integration": " NODE_ENV=test jest integration/",
+    "test:all": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint .",
+    "format": "prettier . --write",
+    "dev-vite": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/ewd7QYGY)",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "clean": "^4.0.2",
+    "clear": "^0.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "eslint": "^9.36.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.19.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "babel-jest": "^30.1.2",
+    "eslint-plugin-import": "^2.32.0",
+    "jest": "^30.2.0",
+    "prettier": "^3.6.2",
+    "vite": "^6.2.0",
+    "supertest": "^6.3.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ddsw-mn/2025-2c-backend-grupo-10.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ddsw-mn/2025-2c-backend-grupo-10/issues"
+  },
+  "homepage": "https://github.com/ddsw-mn/2025-2c-backend-grupo-10#readme"
+}
