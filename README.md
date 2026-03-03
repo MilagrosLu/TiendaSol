@@ -1,15 +1,54 @@
-# Guía de Despliegue – Entrega 4
+# Sobre el Proyecto 
+TiendaSol permite a los vendedores crear y administrar sus tiendas, gestionar productos y hacer seguimiento de pedidos. Los clientes pueden realizar compras en cada tienda de forma independiente.
 
-## Base de Datos - MongoDB Atlas
+## Demo
+🔗 Frontend: https://tiendasol10.netlify.app/  
+🔗 Backend API: https://tienda-sol-backend-v1-0.onrender.com/  
+🔗 Documentación Swagger: https://tienda-sol-backend-v1-0.onrender.com/docs/
+
+## Trabajo en equipo
+
+Proyecto desarrollado en equipo de 4 integrantes como parte de la materia Desarrollo de Software de UTN FRBA.
+
+Mi rol en el proyecto:
+- Diseño del backend
+- Implementación de endpoints de productos, pedidos y notificaciones
+- Diseño e implementación del frontend con múltiples vistas y manejo de estado.
+- Implementación de sistema de autenticación basado en sesiones para gestión de usuarios.
+- Integración con MongoDB Atlas
+- Configuración de Docker y despliegue en Render del backend
+- Configuración de Docker y despliegue del frontend en Netlify
+
+## 🛠 Tecnologías utilizadas
+
+Frontend:
+- React
+- Vite
+- JavaScript
+
+Backend:
+- Node.js
+- Express
+- MongoDB
+- Swagger
+
+
+Infraestructura:
+- Docker
+- MongoDB Atlas
+- Render
+- Netlify
+  
+# Documentación
+## Guía de Despliege 
+### Base de Datos - MongoDB Atlas
 
 1. Crear un cluster  
 Name: tienda_sol_db  
 Provider: AWS  
 Región: Sao Paulo (sa-east-1)
 
-2. Crear un usuario  
-Username: tienda-sol-db  
-Password: root
+2. Crear un usuario con username y password
 
 3. Seleccionar My Local Environment
 
@@ -19,7 +58,7 @@ Password: root
 connect -> compass -> copiar la url  
 Esa será la MONGODB_PROD
 
-## Backend - Render
+### Backend - Render
 
 1. Ir a new Web Service
 
@@ -33,9 +72,8 @@ docker push
 4. Servicio: 2025-2c-grupo-10 (Región Oregon – Free).
 
     a. Variables de entorno (Render):  
-    MONGODB_PROD = mongodb+srv://tienda-sol-db:root@cluster0.vcnaza6.mongodb.net/tienda_sol_db
-
-## Frontend - Netlify
+    MONGODB_PROD = <connection_string>
+### Frontend - Netlify
 
 1. Conectar Netlify con GitHub
 
@@ -52,10 +90,11 @@ Funciones: /tienda-sol-frontend/netlify/functions/
 5. Variable de entorno:  
 VITE_API_URL= https://tienda-sol-backend-v1-0.onrender.com
 
-## Conexión y Verificación
+### Conexión y Verificación
 
 El frontend usa VITE_API_URL para comunicarse con la API de render.
 
 El backend debe permitir el dominio del frontend mediante la variable VITE_API_URL
 
-Dominio: https://tiendasol10.netlify.app/
+
+
